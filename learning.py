@@ -78,7 +78,12 @@ def create_card(model, title, date, signed, tag):
         wait = get_wait(driver)
         wait.until(EC.element_to_be_clickable)
 
-        title_field.send_keys(f" - {title}")
+        title_field.click()
+        title_field.send_keys(Keys.CONTROL, 'a')
+        title_field.send_keys(Keys.DELETE)
+        time.sleep(1)
+
+        title_field.send_keys(f"{title}")
 
     def select_tag():
         tag_field = driver.find_element(by=By.ID, value="card_tags")
@@ -150,6 +155,32 @@ def create_card(model, title, date, signed, tag):
     wait.until(EC.element_to_be_clickable)
     btn_save.click()
 
+def finalize_card(baixa):
+    print(baixa)
+    url_card_created = driver.current_url
+    url_interact_card = url_card_created.replace("view", "interact") + "/questions"
+
+    driver.get(url_interact_card)
+    time.sleep(5)
+
+    question_description_field = driver.find_element(By.ID, "card_questions_2__joinData_answer")
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'})", question_description_field)
+    wait = get_wait(driver)
+    wait.until(EC.element_to_be_clickable)
+
+    question_description_field.send_keys(baixa)
+
+    btn_save = driver.find_element(By.CSS_SELECTOR, ".ant-btn.ant-btn-primary.sc-eqIVtm.gSDvSK")
+    driver.execute_script("arguments[0].scrollIntoView({block: 'center'})", btn_save)
+    wait = get_wait(driver)
+    wait.until(EC.element_to_be_clickable)
+    btn_save.click()
+
+    time.sleep(5)
+
+    # Concluir Card
+
+
 def teardown(driver):
     driver.quit()
 
@@ -163,6 +194,7 @@ for _, row in df.iterrows():
     data = row['Data']
     responsavel = row['Responsável']
     tag = row['Tag']
+    baixa = row['Baixa']
 
     data_obj = datetime.strptime(data, "%Y-%m-%d %H:%M:%S")
     data_formatada = data_obj.strftime("%d/%m/%Y")
@@ -172,5 +204,8 @@ for _, row in df.iterrows():
     time.sleep(5)
     create_card(modelo, titulo, data, responsavel, tag)
     time.sleep(20)
+
+    if baixa and baixa.strip() != "":
+        finalize_card(baixa)
 
 teardown(driver)

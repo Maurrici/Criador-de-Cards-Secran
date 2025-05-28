@@ -32,10 +32,12 @@ O script irá:
 
 A planilha deve conter as seguintes colunas (com esses nomes exatamente):
 
-| Modelo | Título | Data | Responsável | Tag |
-|--------|--------|------|-------------|-----|
+| Modelo | Título | Data | Responsável | Tag | Baixa |
+|--------|--------|------|-------------|-----|-------|
 
 A data deve estar no formato `DD/MM/YYYY`.
+
+A coluna baixa deve ser preenchida apenas para cards que devem ser concluídos logo após a criação.
 
 ## ⚠️ Observações
 
